@@ -53,7 +53,6 @@ def test_get_booking_positive(api_client):
     # Проверяем, что вернулся список бронирований
     response_json = response.json()
     assert isinstance(response_json, list), "Response is not a list"
-    assert len(response_json) > 0, "Booking list is empty"
+    assert response_json, "Booking list is empty"
 
-    for booking in response_json:
-        assert "bookingid" in booking, f"Missing 'bookingid' in {booking}"
+    assert all("bookingid" in item for item in response_json)
