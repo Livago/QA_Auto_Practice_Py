@@ -1,17 +1,26 @@
 # Python
 __pycache__/
-*.pyc
-.env
-.env.*
+*.py[cod]
 
-# Venv
+# Виртуальные окружения
 venv/
 .venv/
+.venv1/
+.env
+.env.*
 
 # IDE
 .idea/
 .vscode/
 
-# Reports
+# Pytest
+.pytest_cache/
+
+# Allure
 allure-results/
 allure-report/
+
+# Playwright артефакты
+playwright-report/
+test-results/
+ui_tests/artifacts/

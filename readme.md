@@ -31,3 +31,7 @@ https://the-internet.herokuapp.com/ - куча демо-страниц (логи
 https://demoqa.com/ - формы, таблицы, модальные окна
 https://automationexercise.com/ - реальный e-commerce сайт
 https://saucedemo.com/ - демо интернет-магазин
+
+## CI Status
+![API CI](https://github.com/<user>/<repo>/actions/workflows/api-ci.yml/badge.svg)
+![UI CI](https://github.com/<user>/<repo>/actions/workflows/ui-ci.yml/badge.svg)

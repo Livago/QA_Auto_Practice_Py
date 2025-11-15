@@ -1,0 +1,83 @@
+name: UI CI
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - "ui_tests/**"
+      - ".github/workflows/ui-ci.yml"
+  pull_request:
+    paths:
+      - "ui_tests/**"
+      - ".github/workflows/ui-ci.yml"
+
+jobs:
+  test-ui:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: ui_tests/requirements.txt
+
+      - name: Install deps
+        working-directory: ui_tests
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install Playwright browsers
+        run: |
+          python -m playwright install --with-deps
+
+      - name: Prepare env (optional)
+        if: ${{ secrets.UI_BASE_URL != '' }}
+        working-directory: ui_tests
+        run: |
+          echo "BASE_URL=${{ secrets.UI_BASE_URL }}" >> .env
+
+      - name: Run Playwright tests (trace/video/screens)
+        working-directory: ui_tests
+        env:
+          PYTHONWARNINGS: ignore
+        run: |
+          mkdir -p artifacts/traces artifacts/screenshots artifacts/videos allure-results
+          pytest -m "ui or e2e" -q \
+            --alluredir=allure-results \
+            --tracing on --video on --screenshot on \
+            --maxfail=1
+
+      - name: Upload Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-ui
+          path: ui_tests/allure-results
+          retention-days: 7
+
+      - name: Upload Playwright traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces
+          path: ui_tests/**/test-results/**/*.zip
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload screenshots/videos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-artifacts
+          path: |
+            ui_tests/artifacts/screenshots
+            ui_tests/artifacts/videos
+          if-no-files-found: ignore
+          retention-days: 7
