@@ -1,11 +1,3 @@
-import pytest
-from utils.api_client import ApiClient
-
-@pytest.fixture(scope="module")
-def api_client():
-    return ApiClient()
-
-
 def test_create_token_positive(api_client):
     """
     Проверка успешного создания токена при корректных данных
